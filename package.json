@@ -1,0 +1,23 @@
+{
+  "type": "module",
+  "scripts": {
+    "check": "npm run eslint && npm run tsc && npm run jest",
+    "eslint": "eslint",
+    "jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests",
+    "prettier": "prettier -l .",
+    "server": "vite serve src",
+    "tsc": "tsc"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.6",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "eslint": "^10.14.0",
+    "@eslint/js": "^10.0.1",
+    "globals": "^17.14.0",
+    "jest": "^30.5.2",
+    "prettier": "^3.9.10",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}
