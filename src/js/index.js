@@ -1,7 +1,9 @@
+// @ts-ignore
+import sw from "./sw.js?url&no-inline";
 import { hdom } from "@htmltools/hdom";
 
 // Set path relative to root.
-const reg = await navigator.serviceWorker.register("/js/sw.js");
+const reg = await navigator.serviceWorker.register(sw);
 
 console.log(reg);
 

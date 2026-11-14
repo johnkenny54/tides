@@ -11,5 +11,6 @@
     "rootDir": ".",
     "skipLibCheck": false,
     "strict": true
-  }
+  },
+  "exclude": ["public"]
 }
