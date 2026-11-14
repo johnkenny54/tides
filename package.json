@@ -1,6 +1,7 @@
 {
   "type": "module",
   "scripts": {
+    "build": "vite build src --outDir ../public --emptyOutDir",
     "check": "npm run eslint && npm run tsc && npm run jest",
     "eslint": "eslint",
     "jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests",
