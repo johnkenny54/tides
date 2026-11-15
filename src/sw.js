@@ -28,8 +28,11 @@ async function handleFetch(e) {
         return r;
       }
       const response = await fetch(e.request);
-      const cache = await caches.open(cacheName);
-      cache.put(e.request, response.clone());
+      const url = new URL(e.request.url);
+      if (url.protocol === "http:" || url.protocol === "https:") {
+        const cache = await caches.open(cacheName);
+        cache.put(e.request, response.clone());
+      }
       return response;
     })(),
   );
