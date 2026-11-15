@@ -5,10 +5,6 @@ import { hdom } from "@htmltools/hdom";
 
 await navigator.serviceWorker.register(sw);
 
-console.log(
-  `navigator.serviceWorker.controller: ${navigator.serviceWorker.controller}`,
-);
-
 // const resp = await fetch(
 //   "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20250801&end_date=20250831&station=9414816&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&format=json",
 // );
