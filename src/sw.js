@@ -1,6 +1,14 @@
 /**
- * @typedef {{request:Request}} FetchEvent
+ * @callback FnResponse
+ * @param {Promise<Response>} response
+ *
+ * @typedef {{
+ * request:Request,
+ * respondWith:FnResponse
+ * }} FetchEvent
  */
+
+const cacheName = "tides-v1";
 
 addEventListener("install", () => {});
 
@@ -13,23 +21,16 @@ self.addEventListener("fetch", (e) => {
  * @param {FetchEvent} e
  */
 async function handleFetch(e) {
-  if (e.request.url.startsWith("https://api")) {
-    console.log(`fetching ${e.request.url}`);
-    e.respondWith(
-      new Response(
-        JSON.stringify({
-          count: 1,
-          units: null,
-          stations: [{ name: "xxx" }],
-        }),
-      ),
-    );
-    return;
-  }
-  e.respondWith(fetch(e.request));
-  // return {
-  //   count: 1,
-  //   units: null,
-  //   stations: [{ name: "xxx" }],
-  // };
+  e.respondWith(
+    (async () => {
+      const r = await caches.match(e.request);
+      if (r) {
+        return r;
+      }
+      const response = await fetch(e.request);
+      const cache = await caches.open(cacheName);
+      cache.put(e.request, response.clone());
+      return response;
+    })(),
+  );
 }
