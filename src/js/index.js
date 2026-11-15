@@ -3,6 +3,14 @@
 import sw from "../sw.js?url&no-inline";
 import { hdom } from "@htmltools/hdom";
 
+/**
+ * @typedef {{
+ * name:string,
+ * lat:number,
+ * lng:number
+ * }} StationData
+ */
+
 await navigator.serviceWorker.register(sw);
 
 // const resp = await fetch(
@@ -10,11 +18,25 @@ await navigator.serviceWorker.register(sw);
 // );
 // console.log(await resp.json());
 
+/** @type {StationData} */
 const stationData = await getNoaaData();
 
 const main = hdom.removeChildren("main");
 const h1 = hdom.createElement("h1", {}, main);
 hdom.setTextValue(h1, stationData.name);
+
+const div = hdom.createElement("div", {}, main);
+const ll = `${stationData.lat},${stationData.lng}`;
+// @see https://developers.google.com/maps/documentation/urls/get-started
+div.appendChild(
+  hdom.createLinkElement(
+    `https://www.google.com/maps/search/?api=1&query=${ll}`,
+    ll,
+    {
+      target: "_blank",
+    },
+  ),
+);
 
 /**
  * @template T
