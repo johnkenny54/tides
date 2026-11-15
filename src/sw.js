@@ -21,6 +21,10 @@ self.addEventListener("fetch", (e) => {
  * @param {FetchEvent} e
  */
 async function handleFetch(e) {
+  const url = new URL(e.request.url);
+  if (url.host !== location.host || url.port !== location.port) {
+    return;
+  }
   e.respondWith(
     (async () => {
       const r = await caches.match(e.request);
@@ -28,11 +32,8 @@ async function handleFetch(e) {
         return r;
       }
       const response = await fetch(e.request);
-      const url = new URL(e.request.url);
-      if (url.protocol === "http:" || url.protocol === "https:") {
-        const cache = await caches.open(cacheName);
-        cache.put(e.request, response.clone());
-      }
+      const cache = await caches.open(cacheName);
+      cache.put(e.request, response.clone());
       return response;
     })(),
   );
