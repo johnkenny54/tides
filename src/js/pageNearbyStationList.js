@@ -1,6 +1,7 @@
 import * as turf from "@turf/turf";
 import { hdom } from "@htmltools/hdom";
 import { NOAA } from "./noaa.js";
+import { PageStation } from "./pageStation.js";
 
 export class PageNearbyStationList {
   static async createPage() {
@@ -16,7 +17,16 @@ export class PageNearbyStationList {
    */
   static #addStation(station, dist, container) {
     const outer = hdom.createElement("div", {}, container);
-    hdom.setTextValue(outer, station.getStationName());
+    const link = hdom.createLinkElement(
+      "",
+      station.getStationName(),
+      {},
+      outer,
+    );
+    hdom.addEventListener(link, "click", async (event) => {
+      event.preventDefault();
+      await PageStation.createPage(station.getId());
+    });
     hdom.appendTextValue(outer, ` ${dist}km`);
   }
 

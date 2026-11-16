@@ -13,6 +13,16 @@ import { DBCache } from "./dbCache.js";
 
 export class NOAA {
   /**
+   *
+   * @param {string} id
+   * @returns {Promise<NOAAStationData|undefined>}
+   */
+  static async getStationData(id) {
+    const stations = await this.getStationList();
+    return stations.find((station) => station.getId() === id);
+  }
+
+  /**
    * @returns {Promise<NOAAStationData[]>}
    */
   static async getStationList() {
@@ -55,6 +65,10 @@ export class NOAAStationData {
    */
   constructor(rawStationData) {
     this.#stationData = rawStationData;
+  }
+
+  getId() {
+    return this.#stationData.id;
   }
 
   getLatitude() {
