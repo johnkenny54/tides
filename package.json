@@ -12,6 +12,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@htmltools/hdom": "^0.1.6",
+    "@turf/turf": "^7.4.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.6.6",
     "@vitejs/plugin-basic-ssl": "^2.3.0",

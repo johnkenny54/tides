@@ -22,7 +22,11 @@ self.addEventListener("fetch", (e) => {
  */
 async function handleFetch(e) {
   const url = new URL(e.request.url);
-  if (url.host !== location.host || url.port !== location.port) {
+  if (
+    url.hostname === "localhost" ||
+    url.hostname !== location.hostname ||
+    url.port !== location.port
+  ) {
     return;
   }
   e.respondWith(

@@ -57,6 +57,14 @@ export class NOAAStationData {
     this.#stationData = rawStationData;
   }
 
+  getLatitude() {
+    return this.#stationData.lat;
+  }
+
+  getLongitude() {
+    return this.#stationData.lng;
+  }
+
   getStationName() {
     return this.#stationData.name;
   }
