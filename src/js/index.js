@@ -14,15 +14,3 @@ import { PageNearbyStationList } from "./pageNearbyStationList.js";
 await navigator.serviceWorker.register(sw);
 
 await PageNearbyStationList.createPage();
-
-/**
- * @template T
- * @returns {Promise<T>}
- */
-async function getNoaaData() {
-  const resp = await fetch(
-    "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/9414290.json",
-  );
-  const json = await resp.json();
-  return json.stations[0];
-}
