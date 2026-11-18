@@ -8,9 +8,27 @@
  * }} FetchEvent
  */
 
-const cacheName = "tides-v1";
+const VERSION = 3;
+const cacheName = `tides-${VERSION}`;
 
-addEventListener("install", () => {});
+addEventListener("install", () => {
+  console.log(`install ${VERSION}`);
+});
+
+addEventListener("activate", (event) => {
+  console.log(`activate ${VERSION}`);
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.map((key) => {
+          if (key !== cacheName) {
+            return caches.delete(key);
+          }
+        }),
+      ),
+    ),
+  );
+});
 
 self.addEventListener("fetch", (e) => {
   const fe = /** @type {FetchEvent} */ (/** @type {unknown} */ (e));
