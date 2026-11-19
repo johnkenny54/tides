@@ -1,6 +1,13 @@
 /**
  * @callback FnResponse
- * @param {Promise<Response>} response
+ * @param {Promise<Response|undefined>} response
+ *
+ * @callback FnWait
+ * @param {Promise<void>|Promise<(boolean|undefined)[]>} fn
+ *
+ * @typedef {{
+ * waitUntil:FnWait
+ * }} ExtendableEvent
  *
  * @typedef {{
  * request:Request,
@@ -8,24 +15,48 @@
  * }} FetchEvent
  */
 
-const VERSION = 3;
-const cacheName = `tides-${VERSION}`;
+const VERSION = 5;
+const CACHE_NAME = `tides-${VERSION}`;
 
-addEventListener("install", () => {
-  console.log(`install ${VERSION}`);
+self.addEventListener("install", (e) => {
+  /** @type {ExtendableEvent} */ (/** @type {unknown} */ (e)).waitUntil(
+    (async () => {
+      console.log(`install ${VERSION}`);
+
+      // Delete existing cache if present.
+      await caches.delete(CACHE_NAME);
+
+      // Add static resources in live version.
+      const manifest = await fetch("../.vite/manifest.json");
+      let json;
+      try {
+        json = await manifest.json();
+      } catch {
+        //
+      }
+
+      /** @type {{file:string,css:string[]}} */
+      const indexAssets = json["index.html"];
+      const resources = ["index.html"]
+        .concat(indexAssets.file)
+        .concat(indexAssets.css);
+
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(resources.map((r) => "../" + r));
+    })(),
+  );
 });
 
-addEventListener("activate", (event) => {
+addEventListener("activate", async (e) => {
   console.log(`activate ${VERSION}`);
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys.map((key) => {
-          if (key !== cacheName) {
-            return caches.delete(key);
-          }
-        }),
-      ),
+  const keys = await caches.keys();
+  /** @type {ExtendableEvent} */ (/** @type {unknown} */ (e)).waitUntil(
+    Promise.all(
+      keys.map((key) => {
+        if (key !== CACHE_NAME) {
+          return caches.delete(key);
+        }
+      }),
     ),
   );
 });
@@ -40,11 +71,7 @@ self.addEventListener("fetch", (e) => {
  */
 async function handleFetch(e) {
   const url = new URL(e.request.url);
-  if (
-    url.hostname === "localhost" ||
-    url.hostname !== location.hostname ||
-    url.port !== location.port
-  ) {
+  if (url.protocol !== "https:" && url.protocol !== "http:") {
     return;
   }
   e.respondWith(
@@ -54,7 +81,7 @@ async function handleFetch(e) {
         return r;
       }
       const response = await fetch(e.request);
-      const cache = await caches.open(cacheName);
+      const cache = await caches.open(CACHE_NAME);
       cache.put(e.request, response.clone());
       return response;
     })(),

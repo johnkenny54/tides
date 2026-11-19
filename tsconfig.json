@@ -10,7 +10,8 @@
     "noEmit": true,
     "rootDir": ".",
     "skipLibCheck": false,
-    "strict": true
+    "strict": true,
+    "types": ["vite/client"]
   },
   "exclude": ["public"]
 }

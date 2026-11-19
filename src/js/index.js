@@ -11,6 +11,6 @@ import { PageNearbyStationList } from "./pageNearbyStationList.js";
  * }} StationData
  */
 
-await navigator.serviceWorker.register(sw);
+await navigator.serviceWorker.register(sw, { type: "module" });
 
 await PageNearbyStationList.createPage();
