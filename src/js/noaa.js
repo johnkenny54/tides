@@ -1,5 +1,3 @@
-import { DBCache } from "./dbCache.js";
-
 /**
  * @typedef {{
  * state:string,
@@ -26,17 +24,10 @@ export class NOAA {
    * @returns {Promise<NOAAStationData[]>}
    */
   static async getStationList() {
-    const cache = await DBCache.getInstance();
-    /** @type {RawStationData[]|undefined} */
-    let rawStationData = await cache.get("stations");
-    if (rawStationData === undefined) {
-      /** @type {{stations:RawStationData[]}} */
-      const data = await this.#getNoaaData(
-        "stations.json?type=tidepredictions",
-      );
-      rawStationData = data.stations;
-      await cache.put("stations", rawStationData);
-    }
+    /** @type {{stations:RawStationData[]}} */
+    const data = await this.#getNoaaData("stations.json?type=tidepredictions");
+    const rawStationData = data.stations;
+
     const stations = [];
     for (const station of rawStationData) {
       stations.push(new NOAAStationData(station));

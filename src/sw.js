@@ -35,14 +35,16 @@ self.addEventListener("install", (e) => {
         //
       }
 
-      /** @type {{file:string,css:string[]}} */
-      const indexAssets = json["index.html"];
-      const resources = ["index.html"]
-        .concat(indexAssets.file)
-        .concat(indexAssets.css);
+      if (json) {
+        /** @type {{file:string,css:string[]}} */
+        const indexAssets = json["index.html"];
+        const resources = ["index.html"]
+          .concat(indexAssets.file)
+          .concat(indexAssets.css);
 
-      const cache = await caches.open(CACHE_NAME);
-      await cache.addAll(resources.map((r) => "../" + r));
+        const cache = await caches.open(CACHE_NAME);
+        await cache.addAll(resources.map((r) => "../" + r));
+      }
     })(),
   );
 });
