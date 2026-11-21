@@ -1,0 +1,11 @@
+{
+  "name": "Tides",
+  "start_url": ".",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "/img/icon-512x512.png",
+      "sizes": "512x512"
+    }
+  ]
+}

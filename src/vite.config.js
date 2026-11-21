@@ -3,4 +3,5 @@ import { defineConfig } from "vite";
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
   build: { manifest: true },
+  publicDir: "static",
 });
