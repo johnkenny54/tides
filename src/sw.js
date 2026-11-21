@@ -52,15 +52,19 @@ self.addEventListener("install", (e) => {
 addEventListener("activate", async (e) => {
   console.log(`activate ${VERSION}`);
   const keys = await caches.keys();
-  /** @type {ExtendableEvent} */ (/** @type {unknown} */ (e)).waitUntil(
-    Promise.all(
-      keys.map((key) => {
-        if (key !== CACHE_NAME) {
-          return caches.delete(key);
-        }
-      }),
-    ),
-  );
+  try {
+    /** @type {ExtendableEvent} */ (/** @type {unknown} */ (e)).waitUntil(
+      Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        }),
+      ),
+    );
+  } catch {
+    //
+  }
 });
 
 self.addEventListener("fetch", (e) => {
