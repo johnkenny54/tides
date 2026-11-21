@@ -1,10 +1,10 @@
 {
   "name": "Tides",
-  "start_url": ".",
+  "start_url": "/tides",
   "display": "fullscreen",
   "icons": [
     {
-      "src": "/img/icon-512x512.png",
+      "src": "/tides/img/icon-512x512.png",
       "sizes": "512x512"
     }
   ]
