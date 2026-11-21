@@ -13,7 +13,6 @@
     "@htmltools/hdom": "^0.1.7",
     "@turf/turf": "^7.4.0",
     "@types/node": "^26.6.6",
-    "@vitejs/plugin-basic-ssl": "^2.3.0",
     "eslint": "^10.15.0",
     "globals": "^17.14.0",
     "prettier": "^3.10.1",
