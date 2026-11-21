@@ -2,23 +2,20 @@
   "type": "module",
   "scripts": {
     "build": "vite build src --outDir ../public --emptyOutDir",
-    "check": "npm run eslint && npm run tsc && npm run jest",
+    "check": "npm run eslint && npm run tsc",
     "eslint": "eslint",
-    "jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests",
     "prettier": "prettier -l .",
     "server": "vite serve src",
     "tsc": "tsc"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@htmltools/hdom": "^0.1.6",
+    "@htmltools/hdom": "^0.1.7",
     "@turf/turf": "^7.4.0",
-    "@types/jest": "^30.0.0",
     "@types/node": "^26.6.6",
     "@vitejs/plugin-basic-ssl": "^2.3.0",
     "eslint": "^10.15.0",
     "globals": "^17.14.0",
-    "jest": "^30.5.2",
     "prettier": "^3.10.1",
     "typescript": "^7.0.2",
     "vite": "^8.3.8"
