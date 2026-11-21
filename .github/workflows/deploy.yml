@@ -22,7 +22,7 @@ jobs:
 
       # Validate code.
       - run: npm run check
- build:
+  build:
     runs-on: ubuntu-latest
     needs: test
     steps:
