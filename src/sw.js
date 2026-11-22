@@ -49,7 +49,7 @@ self.addEventListener("install", (e) => {
   );
 });
 
-addEventListener("activate", async (e) => {
+self.addEventListener("activate", async (e) => {
   console.log(`activate ${VERSION}`);
   const keys = await caches.keys();
   try {
@@ -69,6 +69,7 @@ addEventListener("activate", async (e) => {
 
 self.addEventListener("fetch", (e) => {
   const fe = /** @type {FetchEvent} */ (/** @type {unknown} */ (e));
+  console.log(fe);
   handleFetch(fe);
 });
 
@@ -77,6 +78,7 @@ self.addEventListener("fetch", (e) => {
  */
 async function handleFetch(e) {
   const url = new URL(e.request.url);
+  console.log(e.request.url);
   if (url.protocol !== "https:" && url.protocol !== "http:") {
     return;
   }
@@ -86,6 +88,7 @@ async function handleFetch(e) {
       if (r) {
         return r;
       }
+      console.log("fetching " + e.request.url);
       const response = await fetch(e.request);
       const cache = await caches.open(CACHE_NAME);
       cache.put(e.request, response.clone());

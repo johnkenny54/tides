@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "build": "vite build src --outDir ../public --emptyOutDir",
+    "build": "vite build src",
     "check": "npm run eslint && npm run tsc",
     "eslint": "eslint",
     "prettier": "prettier -l .",
