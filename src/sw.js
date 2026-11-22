@@ -15,14 +15,12 @@
  * }} FetchEvent
  */
 
-const VERSION = 5;
+const VERSION = 6;
 const CACHE_NAME = `tides-${VERSION}`;
 
 self.addEventListener("install", (e) => {
   /** @type {ExtendableEvent} */ (/** @type {unknown} */ (e)).waitUntil(
     (async () => {
-      console.log(`install ${VERSION}`);
-
       // Delete existing cache if present.
       await caches.delete(CACHE_NAME);
 
@@ -50,7 +48,6 @@ self.addEventListener("install", (e) => {
 });
 
 self.addEventListener("activate", async (e) => {
-  console.log(`activate ${VERSION}`);
   const keys = await caches.keys();
   try {
     /** @type {ExtendableEvent} */ (/** @type {unknown} */ (e)).waitUntil(
@@ -69,7 +66,6 @@ self.addEventListener("activate", async (e) => {
 
 self.addEventListener("fetch", (e) => {
   const fe = /** @type {FetchEvent} */ (/** @type {unknown} */ (e));
-  console.log(fe);
   handleFetch(fe);
 });
 
@@ -78,7 +74,6 @@ self.addEventListener("fetch", (e) => {
  */
 async function handleFetch(e) {
   const url = new URL(e.request.url);
-  console.log(e.request.url);
   if (url.protocol !== "https:" && url.protocol !== "http:") {
     return;
   }
@@ -88,7 +83,6 @@ async function handleFetch(e) {
       if (r) {
         return r;
       }
-      console.log("fetching " + e.request.url);
       const response = await fetch(e.request);
       const cache = await caches.open(CACHE_NAME);
       cache.put(e.request, response.clone());
