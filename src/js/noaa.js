@@ -1,5 +1,6 @@
 /**
  * @typedef {{
+ * d: string,
  * t: string,
  * v: string,
  * type: 'L'|'H'
@@ -19,7 +20,7 @@ export class NOAA {
   /**
    * @param {string} stationId
    * @param {string} date
-   * @returns {Promise<{predictions:HighLowData[]}>}
+   * @returns {Promise<HighLowData[]>}
    */
   static async getHighLowData(stationId, date) {
     const url = new URL(
@@ -27,8 +28,14 @@ export class NOAA {
     );
     url.searchParams.set("station", stationId);
     url.searchParams.set("begin_date", date);
-    url.searchParams.set("end_date", date);
-    return await this.#getNoaaData(url.toString());
+    url.searchParams.set("range", (30 * 24).toString());
+    /** @type {{predictions:HighLowData[]}} */
+    const rawData = await this.#getNoaaData(url.toString());
+    const data = rawData.predictions.map((p) => {
+      const dt = p.t.split(" ");
+      return { d: dt[0], t: dt[1], v: p.v, type: p.type };
+    });
+    return data;
   }
 
   /**

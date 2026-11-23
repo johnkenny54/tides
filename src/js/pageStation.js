@@ -36,7 +36,7 @@ export class PageStation {
     hdom.createTextElement("p", {}, dateString, divTides);
 
     const data = await NOAA.getHighLowData(id, dateString);
-    for (const hl of data.predictions) {
+    for (const hl of data) {
       hdom.createTextElement("div", {}, hl.t, divTides);
     }
   }
