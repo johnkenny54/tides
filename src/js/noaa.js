@@ -1,5 +1,11 @@
 /**
  * @typedef {{
+ * t: string,
+ * v: string,
+ * type: 'L'|'H'
+ * }} HighLowData
+ *
+ * @typedef {{
  * state:string,
  * type:string,
  * id:string,
@@ -11,7 +17,21 @@
 
 export class NOAA {
   /**
-   *
+   * @param {string} stationId
+   * @param {string} date
+   * @returns {Promise<{predictions:HighLowData[]}>}
+   */
+  static async getHighLowData(stationId, date) {
+    const url = new URL(
+      "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&interval=hilo&units=metric&time_zone=lst_ldt&datum=MLLW&application=tidy&format=json",
+    );
+    url.searchParams.set("station", stationId);
+    url.searchParams.set("begin_date", date);
+    url.searchParams.set("end_date", date);
+    return await this.#getNoaaData(url.toString());
+  }
+
+  /**
    * @param {string} id
    * @returns {Promise<NOAAStationData|undefined>}
    */
@@ -25,7 +45,9 @@ export class NOAA {
    */
   static async getStationList() {
     /** @type {{stations:RawStationData[]}} */
-    const data = await this.#getNoaaData("stations.json?type=tidepredictions");
+    const data = await this.#getNoaaData(
+      "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions",
+    );
     const rawStationData = data.stations;
 
     const stations = [];
@@ -41,9 +63,7 @@ export class NOAA {
    * @returns {Promise<T>}
    */
   static async #getNoaaData(url) {
-    const resp = await fetch(
-      `https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/${url}`,
-    );
+    const resp = await fetch(url);
     return await resp.json();
   }
 }

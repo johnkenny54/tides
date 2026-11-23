@@ -28,5 +28,16 @@ export class PageStation {
         },
       ),
     );
+
+    const date = Temporal.Now.zonedDateTimeISO();
+    const dateString = date.toPlainDate().toString();
+
+    const divTides = hdom.createElement("div", { id: "hilo" }, main);
+    hdom.createTextElement("p", {}, dateString, divTides);
+
+    const data = await NOAA.getHighLowData(id, dateString);
+    for (const hl of data.predictions) {
+      hdom.createTextElement("div", {}, hl.t, divTides);
+    }
   }
 }
