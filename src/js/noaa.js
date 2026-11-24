@@ -1,10 +1,11 @@
+import { DB, STORE_HILO } from "./db.js";
+
 /**
  * @typedef {{
- * d: string,
  * t: string,
  * v: string,
  * type: 'L'|'H'
- * }} HighLowData
+ * }} HighLowDataForDate
  *
  * @typedef {{
  * state:string,
@@ -20,22 +21,53 @@ export class NOAA {
   /**
    * @param {string} stationId
    * @param {string} date
-   * @returns {Promise<HighLowData[]>}
+   * @returns {Promise<HighLowDataForDate[]>}
    */
   static async getHighLowData(stationId, date) {
+    const db = await DB.getInstance();
+    /** @type {Object<string,HighLowDataForDate[]>|undefined} */
+    let stationData = await db.get(STORE_HILO, stationId);
+    if (stationData !== undefined) {
+      const dateData = stationData[date];
+      if (dateData !== undefined) {
+        return dateData;
+      }
+    }
+
+    // Fill in data for the missing date and save to DB.
     const url = new URL(
       "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&interval=hilo&units=metric&time_zone=lst_ldt&datum=MLLW&application=tidy&format=json",
     );
     url.searchParams.set("station", stationId);
     url.searchParams.set("begin_date", date);
     url.searchParams.set("range", (30 * 24).toString());
-    /** @type {{predictions:HighLowData[]}} */
+
+    /** @type {{predictions:HighLowDataForDate[]}} */
     const rawData = await this.#getNoaaData(url.toString());
-    const data = rawData.predictions.map((p) => {
-      const dt = p.t.split(" ");
-      return { d: dt[0], t: dt[1], v: p.v, type: p.type };
-    });
-    return data;
+
+    /** @type {Object<string,HighLowDataForDate[]>} */
+    const newStationData = {};
+    for (const hilo of rawData.predictions) {
+      const dt = hilo.t.split(" ");
+      const d = dt[0];
+      let dateData = newStationData[d];
+      if (dateData === undefined) {
+        dateData = [];
+        newStationData[d] = dateData;
+      }
+      dateData.push({ t: dt[1], v: hilo.v, type: hilo.type });
+    }
+
+    if (stationData === undefined) {
+      stationData = newStationData;
+    } else {
+      for (const [k, v] of Object.entries(newStationData)) {
+        stationData[k] = v;
+      }
+    }
+    await db.put(STORE_HILO, stationId, stationData);
+
+    return stationData[date];
   }
 
   /**
