@@ -21,7 +21,7 @@ export class PageStation {
     hdom.setTextValue(h1, station.getStationName());
 
     const div = hdom.createElement("div", "centered", eStation);
-    const ll = `${station.getLatitude()},${station.getLongitude()}`;
+    const ll = `${+station.getLatitude().toFixed(4)},${+station.getLongitude().toFixed(4)}`;
     // @see https://developers.google.com/maps/documentation/urls/get-started
     div.appendChild(
       hdom.createLinkElement(

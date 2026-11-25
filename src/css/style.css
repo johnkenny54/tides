@@ -12,6 +12,7 @@ div#station {
   flex-direction: column;
   width: fit-content;
   margin: auto;
+  gap: .5rem;
 }
 
 div#hilo {
