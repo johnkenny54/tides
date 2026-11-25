@@ -31,13 +31,23 @@ export class PageStation {
 
     const date = Temporal.Now.zonedDateTimeISO();
     const dateString = date.toPlainDate().toString();
+    hdom.createTextElement("p", {}, dateString, main);
 
     const divTides = hdom.createElement("div", { id: "hilo" }, main);
-    hdom.createTextElement("p", {}, dateString, divTides);
 
     const data = await NOAA.getHighLowData(id, dateString);
     for (const hl of data) {
-      hdom.createTextElement("div", {}, hl.t, divTides);
+      const t = Temporal.PlainTime.from(hl.t);
+      const eTime = hdom.createElement("div", "time", divTides);
+      hdom.createTextElement(
+        "div",
+        {},
+        t.toLocaleString(undefined, { timeStyle: "short" }),
+        eTime,
+      );
+
+      const eHeight = hdom.createElement("div", "height", divTides);
+      hdom.setElementText(eHeight, hl.v);
     }
   }
 }
