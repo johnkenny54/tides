@@ -15,10 +15,12 @@ export class PageStation {
       throw new Error();
     }
 
-    const h1 = hdom.createElement("h1", {}, main);
+    const eStation = hdom.createElement("div", { id: "station" }, main);
+
+    const h1 = hdom.createElement("h1", "centered", eStation);
     hdom.setTextValue(h1, station.getStationName());
 
-    const div = hdom.createElement("div", {}, main);
+    const div = hdom.createElement("div", "centered", eStation);
     const ll = `${station.getLatitude()},${station.getLongitude()}`;
     // @see https://developers.google.com/maps/documentation/urls/get-started
     div.appendChild(
@@ -33,9 +35,13 @@ export class PageStation {
 
     const date = Temporal.Now.zonedDateTimeISO();
     const dateString = date.toPlainDate().toString();
-    hdom.createTextElement("p", {}, dateString, main);
+    hdom.createTextElement("p", "centered", dateString, eStation);
 
-    const divTides = hdom.createElement("div", { id: "hilo" }, main);
+    const divTides = hdom.createElement(
+      "div",
+      { id: "hilo", class: "centered" },
+      eStation,
+    );
 
     const ms = Settings.getMeasurementSystem();
     const heightUnits = ms === "US" ? "ft" : "m";
