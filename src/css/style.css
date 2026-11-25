@@ -7,6 +7,31 @@
   margin: auto;
 }
 
+body {
+  margin: 0;
+  background-color: aqua;
+}
+
+nav {
+  background-color: dodgerblue;
+  padding: .25rem;
+}
+
+nav ul {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0
+}
+
+nav a {
+  color: white
+}
+
+main {
+  padding: .25rem;
+}
+
 div#station {
   display: flex;
   flex-direction: column;
