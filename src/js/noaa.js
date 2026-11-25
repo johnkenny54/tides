@@ -42,14 +42,14 @@ export class NOAA {
 
     // Fill in data for the missing date and save to DB.
     const url = new URL(
-      "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&interval=hilo&units=metric&time_zone=lst_ldt&datum=MLLW&application=tidy&format=json",
+      "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&interval=hilo&units=metric&time_zone=lst_ldt&datum=MLLW&format=json",
     );
     url.searchParams.set("station", stationId);
     url.searchParams.set("begin_date", date);
     url.searchParams.set("range", (30 * 24).toString());
 
     /** @type {{predictions:RawHighLowData[]}} */
-    const rawData = await this.#getNoaaData(url.toString());
+    const rawData = await this.#getNoaaData(url);
 
     /** @type {Object<string,HighLowDataForDate[]>} */
     const newStationData = {};
@@ -91,7 +91,9 @@ export class NOAA {
   static async getStationList() {
     /** @type {{stations:RawStationData[]}} */
     const data = await this.#getNoaaData(
-      "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions",
+      new URL(
+        "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions",
+      ),
     );
     const rawStationData = data.stations;
 
@@ -104,10 +106,11 @@ export class NOAA {
 
   /**
    * @template T
-   * @param {string} url
+   * @param {URL} url
    * @returns {Promise<T>}
    */
   static async #getNoaaData(url) {
+    url.searchParams.set("application", "tidy");
     const resp = await fetch(url);
     return await resp.json();
   }

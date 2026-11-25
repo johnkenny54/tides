@@ -1,6 +1,7 @@
 import { VERSION } from "./version.js";
 
 export const STORE_HILO = "hilo";
+export const STORE_STATIONS = "stations";
 
 export class DB {
   /** @type {DB|undefined} */
@@ -109,17 +110,19 @@ export class DB {
         resolve(request.result);
       };
       request.onupgradeneeded = () => {
-        try {
-          request.result.deleteObjectStore(STORE_HILO);
-        } catch (error) {
-          if (
-            !(error instanceof DOMException) ||
-            error.name !== "NotFoundError"
-          ) {
-            throw error;
+        for (const store of [STORE_HILO, STORE_STATIONS]) {
+          try {
+            request.result.deleteObjectStore(store);
+          } catch (error) {
+            if (
+              !(error instanceof DOMException) ||
+              error.name !== "NotFoundError"
+            ) {
+              throw error;
+            }
           }
+          request.result.createObjectStore(store);
         }
-        request.result.createObjectStore(STORE_HILO);
       };
     });
   }
