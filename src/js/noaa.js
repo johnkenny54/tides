@@ -3,9 +3,15 @@ import { DB, STORE_HILO } from "./db.js";
 /**
  * @typedef {{
  * t: string,
- * v: string,
+ * v: number,
  * type: 'L'|'H'
  * }} HighLowDataForDate
+ *
+ * @typedef {{
+ * t: string,
+ * v: string,
+ * type: 'L'|'H'
+ * }} RawHighLowData
  *
  * @typedef {{
  * state:string,
@@ -42,7 +48,7 @@ export class NOAA {
     url.searchParams.set("begin_date", date);
     url.searchParams.set("range", (30 * 24).toString());
 
-    /** @type {{predictions:HighLowDataForDate[]}} */
+    /** @type {{predictions:RawHighLowData[]}} */
     const rawData = await this.#getNoaaData(url.toString());
 
     /** @type {Object<string,HighLowDataForDate[]>} */
@@ -55,7 +61,7 @@ export class NOAA {
         dateData = [];
         newStationData[d] = dateData;
       }
-      dateData.push({ t: dt[1], v: hilo.v, type: hilo.type });
+      dateData.push({ t: dt[1], v: parseFloat(hilo.v), type: hilo.type });
     }
 
     if (stationData === undefined) {

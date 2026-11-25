@@ -1,5 +1,7 @@
 import { hdom } from "@htmltools/hdom";
 import { NOAA } from "./noaa.js";
+import { Settings } from "./settings.js";
+import { Units } from "./units.js";
 
 export class PageStation {
   /**
@@ -35,6 +37,9 @@ export class PageStation {
 
     const divTides = hdom.createElement("div", { id: "hilo" }, main);
 
+    const ms = Settings.getMeasurementSystem();
+    const heightUnits = ms === "US" ? "ft" : "m";
+
     const data = await NOAA.getHighLowData(id, dateString);
     for (const hl of data) {
       const t = Temporal.PlainTime.from(hl.t);
@@ -47,7 +52,10 @@ export class PageStation {
       );
 
       const eHeight = hdom.createElement("div", "height", divTides);
-      hdom.setElementText(eHeight, hl.v);
+      hdom.setElementText(
+        eHeight,
+        `${Units.convert(hl.v, "m", heightUnits).toFixed(2)} ${heightUnits}`,
+      );
     }
   }
 }
