@@ -1,3 +1,5 @@
+import { VERSION } from "./version.js";
+
 export const STORE_HILO = "hilo";
 
 export class DB {
@@ -98,7 +100,7 @@ export class DB {
 
   static async #init() {
     return new Promise((resolve, reject) => {
-      const request = window.indexedDB.open("tides");
+      const request = window.indexedDB.open("tides", VERSION);
       request.onerror = (event) => {
         console.error(event);
         reject(event);
@@ -107,6 +109,16 @@ export class DB {
         resolve(request.result);
       };
       request.onupgradeneeded = () => {
+        try {
+          request.result.deleteObjectStore(STORE_HILO);
+        } catch (error) {
+          if (
+            !(error instanceof DOMException) ||
+            error.name !== "NotFoundError"
+          ) {
+            throw error;
+          }
+        }
         request.result.createObjectStore(STORE_HILO);
       };
     });

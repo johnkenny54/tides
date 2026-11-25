@@ -1,3 +1,5 @@
+import { VERSION } from "./js/version.js";
+
 /**
  * @callback FnResponse
  * @param {Promise<Response|undefined>} response
@@ -15,7 +17,6 @@
  * }} FetchEvent
  */
 
-const VERSION = 6;
 const CACHE_NAME = `tides-${VERSION}`;
 
 self.addEventListener("install", (e) => {
