@@ -66,8 +66,7 @@ self.addEventListener("activate", async (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  const fe = /** @type {FetchEvent} */ (/** @type {unknown} */ (e));
-  handleFetch(fe);
+  handleFetch(/** @type {FetchEvent} */ (/** @type {unknown} */ (e)));
 });
 
 /**
@@ -76,6 +75,9 @@ self.addEventListener("fetch", (e) => {
 async function handleFetch(e) {
   const url = new URL(e.request.url);
   if (url.protocol !== "https:" && url.protocol !== "http:") {
+    return;
+  }
+  if (url.host === "api.tidesandcurrents.noaa.gov") {
     return;
   }
   e.respondWith(
