@@ -7,7 +7,18 @@ export default defineConfig({
     emptyOutDir: true,
     manifest: true,
     outDir: "../public",
+    rolldownOptions: {
+      output: {
+        entryFileNames: (file) => {
+          // Don't hash service worker name (see https://web.dev/articles/service-worker-lifecycle#avoid-url-change).
+          return file.facadeModuleId?.endsWith("/sw.js")
+            ? `[name].js`
+            : `[name]-[hash].js`;
+        },
+      },
+    },
   },
-  publicDir: "static",
   base: "/tides/",
+  input: ["index.html", "sw.js"],
+  publicDir: "static",
 });

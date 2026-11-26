@@ -1,6 +1,3 @@
-// @ts-ignore
-// Set path relative to root.
-import sw from "../sw.js?url&no-inline";
 import { PageNearbyStationList } from "./pageNearbyStationList.js";
 
 /**
@@ -11,6 +8,6 @@ import { PageNearbyStationList } from "./pageNearbyStationList.js";
  * }} StationData
  */
 
-await navigator.serviceWorker.register(sw, { type: "module" });
+await navigator.serviceWorker.register("../sw.js", { type: "module" });
 
 await PageNearbyStationList.createPage();
