@@ -3,6 +3,14 @@ import { VERSION } from "./version.js";
 export const STORE_HILO = "hilo";
 export const STORE_STATIONS = "stations";
 
+/**
+ * @template A
+ * @template B
+ * @callback FnEntryFactory
+ * @param {A} data
+ * @returns B
+ */
+
 export class DB {
   /** @type {DB|undefined} */
   static #instance;
@@ -37,9 +45,10 @@ export class DB {
   }
 
   /**
+   * @template A
    * @template T
    * @param {string} store
-   * @param {function(any):T} fn
+   * @param {FnEntryFactory<A,T>} fn
    * @returns {Promise<T[]>}
    */
   async getEntries(store, fn) {
