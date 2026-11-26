@@ -1,16 +1,15 @@
+/* Element selectors */
+
 * {
   font-family: "sans-serif";
-}
-
-.centered {
-  width: fit-content;
-  margin: auto;
 }
 
 body {
   margin: 0;
   background-color: aqua;
 }
+
+/* Menu */
 
 nav {
   background-color: dodgerblue;
@@ -32,6 +31,26 @@ main {
   padding: .25rem;
 }
 
+/* Classes */
+
+.centered {
+  width: fit-content;
+  margin: auto;
+}
+
+.grid {
+  display: grid;
+  gap: .25rem 1rem;
+}
+
+/* Page: Station List */
+
+div#stations {
+  grid-template-columns: max-content max-content;
+}
+
+/* Page: Station */
+
 div#station {
   display: flex;
   flex-direction: column;
@@ -41,8 +60,6 @@ div#station {
 }
 
 div#hilo {
-  display: grid;
   grid-template-columns: max-content max-content;
   justify-items: end;
-  gap: .25rem 1rem;
 }

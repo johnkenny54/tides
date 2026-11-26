@@ -39,7 +39,7 @@ export class PageStation {
 
     const divTides = hdom.createElement(
       "div",
-      { id: "hilo", class: "centered" },
+      { id: "hilo", class: "centered grid" },
       eStation,
     );
 
@@ -60,7 +60,11 @@ export class PageStation {
       const eHeight = hdom.createElement("div", "height", divTides);
       hdom.setElementText(
         eHeight,
-        `${Units.convert(hl.v, "m", heightUnits).toFixed(2)} ${heightUnits}`,
+        Units.getDisplayString(
+          Units.convert(hl.v, "m", heightUnits),
+          heightUnits,
+          2,
+        ),
       );
     }
   }
