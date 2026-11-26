@@ -2,6 +2,7 @@ import { hdom } from "@htmltools/hdom";
 import { NOAA } from "./noaa.js";
 import { Settings } from "./settings.js";
 import { Units } from "./units.js";
+import { DateUtils } from "./dateUtils.js";
 
 export class PageStation {
   /**
@@ -33,13 +34,13 @@ export class PageStation {
       ),
     );
 
-    const date = Temporal.Now.zonedDateTimeISO();
-    const dateString = date.toPlainDate().toString();
+    const dateString = DateUtils.getCurrentDateString();
+
     hdom.createTextElement("p", "centered", dateString, eStation);
 
     const divTides = hdom.createElement(
       "div",
-      { id: "hilo", class: "centered" },
+      { id: "hilo", class: "centered grid" },
       eStation,
     );
 
@@ -60,7 +61,11 @@ export class PageStation {
       const eHeight = hdom.createElement("div", "height", divTides);
       hdom.setElementText(
         eHeight,
-        `${Units.convert(hl.v, "m", heightUnits).toFixed(2)} ${heightUnits}`,
+        Units.getDisplayString(
+          Units.convert(hl.v, "m", heightUnits),
+          heightUnits,
+          2,
+        ),
       );
     }
   }

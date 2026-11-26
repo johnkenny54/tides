@@ -1,4 +1,4 @@
-import { DB, STORE_HILO } from "./db.js";
+import { DB, STORE_HILO, STORE_STATIONS } from "./db.js";
 
 /**
  * @typedef {{
@@ -21,6 +21,10 @@ import { DB, STORE_HILO } from "./db.js";
  * lat:number,
  * lng:number
  * }} RawStationData
+ *
+ * @callback FnStationFactory
+ * @param {RawStationData} in
+ * @returns {NOAAStationData}
  */
 
 export class NOAA {
@@ -42,14 +46,14 @@ export class NOAA {
 
     // Fill in data for the missing date and save to DB.
     const url = new URL(
-      "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&interval=hilo&units=metric&time_zone=lst_ldt&datum=MLLW&application=tidy&format=json",
+      "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&interval=hilo&units=metric&time_zone=lst_ldt&datum=MLLW&format=json",
     );
     url.searchParams.set("station", stationId);
     url.searchParams.set("begin_date", date);
     url.searchParams.set("range", (30 * 24).toString());
 
     /** @type {{predictions:RawHighLowData[]}} */
-    const rawData = await this.#getNoaaData(url.toString());
+    const rawData = await this.#getNoaaData(url);
 
     /** @type {Object<string,HighLowDataForDate[]>} */
     const newStationData = {};
@@ -71,7 +75,7 @@ export class NOAA {
         stationData[k] = v;
       }
     }
-    await db.put(STORE_HILO, stationId, stationData);
+    await db.put(STORE_HILO, stationData, stationId);
 
     return stationData[date];
   }
@@ -89,25 +93,48 @@ export class NOAA {
    * @returns {Promise<NOAAStationData[]>}
    */
   static async getStationList() {
+    const db = await DB.getInstance();
+
+    /** @type {FnStationFactory} */
+    const fn = (e) => new NOAAStationData(e);
+    const stationList = await db.getEntries(STORE_STATIONS, fn);
+    if (stationList.length > 0) {
+      return stationList;
+    }
+
+    // No stations found, initialize list.
     /** @type {{stations:RawStationData[]}} */
     const data = await this.#getNoaaData(
-      "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions",
+      new URL(
+        "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions",
+      ),
     );
     const rawStationData = data.stations;
 
     const stations = [];
-    for (const station of rawStationData) {
-      stations.push(new NOAAStationData(station));
+    for (const stn of rawStationData) {
+      /** @type {RawStationData} */
+      const raw = {
+        id: stn.id,
+        name: stn.name,
+        state: stn.state,
+        type: stn.type,
+        lat: stn.lat,
+        lng: stn.lng,
+      };
+      stations.push(new NOAAStationData(raw));
+      db.put(STORE_STATIONS, raw);
     }
     return stations;
   }
 
   /**
    * @template T
-   * @param {string} url
+   * @param {URL} url
    * @returns {Promise<T>}
    */
   static async #getNoaaData(url) {
+    url.searchParams.set("application", "tidy");
     const resp = await fetch(url);
     return await resp.json();
   }

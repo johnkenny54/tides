@@ -1,5 +1,6 @@
 on:
   workflow_dispatch:
+  pull_request:
   push:
     branches:
       - main
@@ -24,6 +25,7 @@ jobs:
       - run: npm run check
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
     needs: test
     steps:
       - uses: actions/checkout@v7
@@ -41,6 +43,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
     needs: build
     steps:
       - name: Deploy to GitHub Pages

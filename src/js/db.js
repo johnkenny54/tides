@@ -1,6 +1,15 @@
 import { VERSION } from "./version.js";
 
 export const STORE_HILO = "hilo";
+export const STORE_STATIONS = "stations";
+
+/**
+ * @template A
+ * @template B
+ * @callback FnEntryFactory
+ * @param {A} data
+ * @returns B
+ */
 
 export class DB {
   /** @type {DB|undefined} */
@@ -13,41 +22,6 @@ export class DB {
    */
   constructor(db) {
     this.#db = db;
-  }
-
-  /**
-   * @param {string} store
-   */
-  async clear(store) {
-    const transaction = this.#db.transaction(store, "readwrite");
-    const objectStore = transaction.objectStore(store);
-    return new Promise((resolve, reject) => {
-      const request = objectStore.clear();
-      request.onerror = (event) => {
-        reject(event);
-      };
-      request.onsuccess = (event) => {
-        resolve(event);
-      };
-    });
-  }
-
-  /**
-   * @param {string} store
-   * @param {string} key
-   */
-  async delete(store, key) {
-    const transaction = this.#db.transaction(store, "readwrite");
-    const objectStore = transaction.objectStore(store);
-    return new Promise((resolve, reject) => {
-      const request = objectStore.delete(key);
-      request.onerror = (event) => {
-        reject(event);
-      };
-      request.onsuccess = () => {
-        resolve(request.result);
-      };
-    });
   }
 
   /**
@@ -71,18 +45,22 @@ export class DB {
   }
 
   /**
+   * @template A
+   * @template T
    * @param {string} store
+   * @param {FnEntryFactory<A,T>} fn
+   * @returns {Promise<T[]>}
    */
-  async getAllKeys(store) {
+  async getEntries(store, fn) {
     const transaction = this.#db.transaction(store);
     const objectStore = transaction.objectStore(store);
     return new Promise((resolve, reject) => {
-      const request = objectStore.getAllKeys();
+      const request = objectStore.getAll();
       request.onerror = (event) => {
         reject(event);
       };
       request.onsuccess = () => {
-        resolve(request.result);
+        resolve(request.result.map((e) => fn(e)));
       };
     });
   }
@@ -98,6 +76,26 @@ export class DB {
     return this.#instance;
   }
 
+  /**
+   * @template T
+   * @param {string} store
+   * @param {string} [key]
+   * @param {T} data
+   */
+  async put(store, data, key) {
+    const transaction = this.#db.transaction(store, "readwrite");
+    const objectStore = transaction.objectStore(store);
+    return new Promise((resolve, reject) => {
+      const request = objectStore.put(data, key);
+      request.onerror = (event) => {
+        reject(event);
+      };
+      request.onsuccess = (event) => {
+        resolve(event);
+      };
+    });
+  }
+
   static async #init() {
     return new Promise((resolve, reject) => {
       const request = window.indexedDB.open("tides", VERSION);
@@ -109,36 +107,22 @@ export class DB {
         resolve(request.result);
       };
       request.onupgradeneeded = () => {
-        try {
-          request.result.deleteObjectStore(STORE_HILO);
-        } catch (error) {
-          if (
-            !(error instanceof DOMException) ||
-            error.name !== "NotFoundError"
-          ) {
-            throw error;
+        for (const store of [STORE_HILO, STORE_STATIONS]) {
+          try {
+            request.result.deleteObjectStore(store);
+          } catch (error) {
+            if (
+              !(error instanceof DOMException) ||
+              error.name !== "NotFoundError"
+            ) {
+              throw error;
+            }
           }
+          request.result.createObjectStore(
+            store,
+            store === STORE_STATIONS ? { keyPath: "id" } : undefined,
+          );
         }
-        request.result.createObjectStore(STORE_HILO);
-      };
-    });
-  }
-
-  /**
-   * @param {string} store
-   * @param {string} key
-   * @param {*} data
-   */
-  async put(store, key, data) {
-    const transaction = this.#db.transaction(store, "readwrite");
-    const objectStore = transaction.objectStore(store);
-    return new Promise((resolve, reject) => {
-      const request = objectStore.put(data, key);
-      request.onerror = (event) => {
-        reject(event);
-      };
-      request.onsuccess = (event) => {
-        resolve(event);
       };
     });
   }
