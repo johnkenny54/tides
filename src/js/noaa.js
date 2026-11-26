@@ -1,4 +1,4 @@
-import { DB, STORE_HILO } from "./db.js";
+import { DB, STORE_HILO, STORE_STATIONS } from "./db.js";
 
 /**
  * @typedef {{
@@ -21,6 +21,10 @@ import { DB, STORE_HILO } from "./db.js";
  * lat:number,
  * lng:number
  * }} RawStationData
+ *
+ * @callback FnStationFactory
+ * @param {RawStationData} in
+ * @returns {NOAAStationData}
  */
 
 export class NOAA {
@@ -89,6 +93,17 @@ export class NOAA {
    * @returns {Promise<NOAAStationData[]>}
    */
   static async getStationList() {
+    const db = await DB.getInstance();
+
+    /** @type {FnStationFactory} */
+    const fn = (e) => new NOAAStationData(e);
+    const stationList = await db.getEntries(STORE_STATIONS, fn);
+    if (stationList.length > 0) {
+      console.log(stationList);
+      return stationList;
+    }
+
+    // No stations found, initialize list.
     /** @type {{stations:RawStationData[]}} */
     const data = await this.#getNoaaData(
       new URL(
@@ -100,6 +115,7 @@ export class NOAA {
     const stations = [];
     for (const station of rawStationData) {
       stations.push(new NOAAStationData(station));
+      db.put(STORE_STATIONS, station.id, station);
     }
     return stations;
   }

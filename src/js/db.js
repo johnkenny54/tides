@@ -17,41 +17,6 @@ export class DB {
   }
 
   /**
-   * @param {string} store
-   */
-  async clear(store) {
-    const transaction = this.#db.transaction(store, "readwrite");
-    const objectStore = transaction.objectStore(store);
-    return new Promise((resolve, reject) => {
-      const request = objectStore.clear();
-      request.onerror = (event) => {
-        reject(event);
-      };
-      request.onsuccess = (event) => {
-        resolve(event);
-      };
-    });
-  }
-
-  /**
-   * @param {string} store
-   * @param {string} key
-   */
-  async delete(store, key) {
-    const transaction = this.#db.transaction(store, "readwrite");
-    const objectStore = transaction.objectStore(store);
-    return new Promise((resolve, reject) => {
-      const request = objectStore.delete(key);
-      request.onerror = (event) => {
-        reject(event);
-      };
-      request.onsuccess = () => {
-        resolve(request.result);
-      };
-    });
-  }
-
-  /**
    * @template T
    * @param {string} store
    * @param {string} key
@@ -72,18 +37,21 @@ export class DB {
   }
 
   /**
+   * @template T
    * @param {string} store
+   * @param {function(any):T} fn
+   * @returns {Promise<T[]>}
    */
-  async getAllKeys(store) {
+  async getEntries(store, fn) {
     const transaction = this.#db.transaction(store);
     const objectStore = transaction.objectStore(store);
     return new Promise((resolve, reject) => {
-      const request = objectStore.getAllKeys();
+      const request = objectStore.getAll();
       request.onerror = (event) => {
         reject(event);
       };
       request.onsuccess = () => {
-        resolve(request.result);
+        resolve(request.result.map((e) => fn(e)));
       };
     });
   }
@@ -97,6 +65,25 @@ export class DB {
       this.#instance = new DB(idb);
     }
     return this.#instance;
+  }
+
+  /**
+   * @param {string} store
+   * @param {string} key
+   * @param {*} data
+   */
+  async put(store, key, data) {
+    const transaction = this.#db.transaction(store, "readwrite");
+    const objectStore = transaction.objectStore(store);
+    return new Promise((resolve, reject) => {
+      const request = objectStore.put(data, key);
+      request.onerror = (event) => {
+        reject(event);
+      };
+      request.onsuccess = (event) => {
+        resolve(event);
+      };
+    });
   }
 
   static async #init() {
@@ -123,25 +110,6 @@ export class DB {
           }
           request.result.createObjectStore(store);
         }
-      };
-    });
-  }
-
-  /**
-   * @param {string} store
-   * @param {string} key
-   * @param {*} data
-   */
-  async put(store, key, data) {
-    const transaction = this.#db.transaction(store, "readwrite");
-    const objectStore = transaction.objectStore(store);
-    return new Promise((resolve, reject) => {
-      const request = objectStore.put(data, key);
-      request.onerror = (event) => {
-        reject(event);
-      };
-      request.onsuccess = (event) => {
-        resolve(event);
       };
     });
   }
