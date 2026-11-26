@@ -75,7 +75,7 @@ export class NOAA {
         stationData[k] = v;
       }
     }
-    await db.put(STORE_HILO, stationId, stationData);
+    await db.put(STORE_HILO, stationData, stationId);
 
     return stationData[date];
   }
@@ -99,7 +99,6 @@ export class NOAA {
     const fn = (e) => new NOAAStationData(e);
     const stationList = await db.getEntries(STORE_STATIONS, fn);
     if (stationList.length > 0) {
-      console.log(stationList);
       return stationList;
     }
 
@@ -113,9 +112,18 @@ export class NOAA {
     const rawStationData = data.stations;
 
     const stations = [];
-    for (const station of rawStationData) {
-      stations.push(new NOAAStationData(station));
-      db.put(STORE_STATIONS, station.id, station);
+    for (const stn of rawStationData) {
+      /** @type {RawStationData} */
+      const raw = {
+        id: stn.id,
+        name: stn.name,
+        state: stn.state,
+        type: stn.type,
+        lat: stn.lat,
+        lng: stn.lng,
+      };
+      stations.push(new NOAAStationData(raw));
+      db.put(STORE_STATIONS, raw);
     }
     return stations;
   }

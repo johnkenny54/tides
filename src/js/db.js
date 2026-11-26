@@ -68,11 +68,12 @@ export class DB {
   }
 
   /**
+   * @template T
    * @param {string} store
-   * @param {string} key
-   * @param {*} data
+   * @param {string} [key]
+   * @param {T} data
    */
-  async put(store, key, data) {
+  async put(store, data, key) {
     const transaction = this.#db.transaction(store, "readwrite");
     const objectStore = transaction.objectStore(store);
     return new Promise((resolve, reject) => {
@@ -108,7 +109,10 @@ export class DB {
               throw error;
             }
           }
-          request.result.createObjectStore(store);
+          request.result.createObjectStore(
+            store,
+            store === STORE_STATIONS ? { keyPath: "id" } : undefined,
+          );
         }
       };
     });
