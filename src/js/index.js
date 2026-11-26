@@ -8,6 +8,6 @@ import { PageNearbyStationList } from "./pageNearbyStationList.js";
  * }} StationData
  */
 
-await navigator.serviceWorker.register("../sw.js", { type: "module" });
+await navigator.serviceWorker.register("./sw.js", { type: "module" });
 
 await PageNearbyStationList.createPage();
