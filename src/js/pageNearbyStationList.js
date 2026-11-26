@@ -4,6 +4,7 @@ import { NOAA } from "./noaa.js";
 import { PageStation } from "./pageStation.js";
 import { Settings } from "./settings.js";
 import { Units } from "./units.js";
+import { DateUtils } from "./dateUtils.js";
 
 export class PageNearbyStationList {
   static async createPage() {
@@ -64,6 +65,12 @@ export class PageNearbyStationList {
     }
 
     nearbyStations.sort((a, b) => a.dist - b.dist);
+
+    // Cache high/low data for nearby stations.
+    const dateString = DateUtils.getCurrentDateString();
+    nearbyStations.forEach((stn) =>
+      NOAA.getHighLowData(stn.station.getId(), dateString),
+    );
 
     const main = hdom.removeChildren("main");
 

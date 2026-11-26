@@ -2,6 +2,7 @@ import { hdom } from "@htmltools/hdom";
 import { NOAA } from "./noaa.js";
 import { Settings } from "./settings.js";
 import { Units } from "./units.js";
+import { DateUtils } from "./dateUtils.js";
 
 export class PageStation {
   /**
@@ -33,8 +34,8 @@ export class PageStation {
       ),
     );
 
-    const date = Temporal.Now.zonedDateTimeISO();
-    const dateString = date.toPlainDate().toString();
+    const dateString = DateUtils.getCurrentDateString();
+
     hdom.createTextElement("p", "centered", dateString, eStation);
 
     const divTides = hdom.createElement(
