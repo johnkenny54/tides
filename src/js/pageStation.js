@@ -50,15 +50,14 @@ export class PageStation {
     const data = await NOAA.getHighLowData(id, dateString);
     for (const hl of data) {
       const t = Temporal.PlainTime.from(hl.t);
-      const eTime = hdom.createElement("div", "time", divTides);
       hdom.createTextElement(
         "div",
         {},
         t.toLocaleString(undefined, { timeStyle: "short" }),
-        eTime,
+        divTides,
       );
 
-      const eHeight = hdom.createElement("div", "height", divTides);
+      const eHeight = hdom.createElement("div", undefined, divTides);
       hdom.setElementText(
         eHeight,
         Units.getDisplayString(
@@ -67,6 +66,8 @@ export class PageStation {
           2,
         ),
       );
+
+      hdom.createTextElement("div", {}, hl.type, divTides);
     }
   }
 }

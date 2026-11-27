@@ -1,5 +1,6 @@
 import { hdom } from "@htmltools/hdom";
 import { PageNearbyStationList } from "./pageNearbyStationList.js";
+import { PageStation } from "./pageStation.js";
 
 /**
  * @typedef {{
@@ -16,4 +17,5 @@ hdom.addEventListener("menu-link-home", "click", async (e) => {
   await PageNearbyStationList.createPage();
 });
 
-await PageNearbyStationList.createPage();
+// await PageNearbyStationList.createPage();
+await PageStation.createPage("9414779");

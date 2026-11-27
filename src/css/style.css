@@ -60,6 +60,6 @@ div#station {
 }
 
 div#hilo {
-  grid-template-columns: max-content max-content;
+  grid-template-columns: max-content max-content max-content;
   justify-items: end;
 }
