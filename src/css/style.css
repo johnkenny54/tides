@@ -59,6 +59,11 @@ div#station {
   gap: .5rem;
 }
 
+div#station div#date {
+  display: flex;
+  column-gap: 1rem;
+}
+
 div#hilo {
   grid-template-columns: max-content max-content max-content;
   justify-items: end;

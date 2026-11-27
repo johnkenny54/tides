@@ -6,12 +6,12 @@ import { DateUtils } from "./dateUtils.js";
 
 export class PageStation {
   /**
-   * @param {string} id
+   * @param {string} stationId
    */
-  static async createPage(id) {
+  static async createPage(stationId) {
     const main = hdom.removeChildren("main");
 
-    const station = await NOAA.getStationData(id);
+    const station = await NOAA.getStationData(stationId);
     if (station === undefined) {
       throw new Error();
     }
@@ -34,20 +34,51 @@ export class PageStation {
       ),
     );
 
+    hdom.createElement("div", { id: "date-specific" }, eStation);
     const dateString = DateUtils.getCurrentDateString();
 
-    hdom.createTextElement("p", "centered", dateString, eStation);
+    await this.#showDateInfo(stationId, dateString);
+  }
+
+  /**
+   * @param {string} stationId
+   * @param {string} dateString
+   * @param {-1} increment
+   */
+  static async #handleDateIncrement(stationId, dateString, increment) {
+    console.log(dateString);
+  }
+
+  /**
+   * @param {string} stationId
+   * @param {string} dateString
+   */
+  static async #showDateInfo(stationId, dateString) {
+    const eDateSpecific = hdom.removeChildren("date-specific");
+
+    const eDate = hdom.createElement(
+      "div",
+      { id: "date", class: "centered" },
+      eDateSpecific,
+    );
+    const ePrevDate = hdom.createTextElement("button", {}, "<", eDate);
+    hdom.addEventListener(
+      ePrevDate,
+      "click",
+      async () => await this.#handleDateIncrement(stationId, dateString, -1),
+    );
+    hdom.createTextElement("div", "centered", dateString, eDate);
 
     const divTides = hdom.createElement(
       "div",
       { id: "hilo", class: "centered grid" },
-      eStation,
+      eDateSpecific,
     );
 
     const ms = Settings.getMeasurementSystem();
     const heightUnits = ms === "US" ? "ft" : "m";
 
-    const data = await NOAA.getHighLowData(id, dateString);
+    const data = await NOAA.getHighLowData(stationId, dateString);
     for (const hl of data) {
       const t = Temporal.PlainTime.from(hl.t);
       hdom.createTextElement(
