@@ -1,3 +1,4 @@
+import { DateUtils } from "./dateUtils.js";
 import { DB, STORE_HILO, STORE_STATIONS } from "./db.js";
 
 /**
@@ -49,8 +50,12 @@ export class NOAA {
       "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&interval=hilo&units=metric&time_zone=lst_ldt&datum=MLLW&format=json",
     );
     url.searchParams.set("station", stationId);
-    url.searchParams.set("begin_date", date);
-    url.searchParams.set("range", (30 * 24).toString());
+    // Get data for 180 days either side of requested date.
+    url.searchParams.set(
+      "begin_date",
+      DateUtils.incrementDateString(date, -180),
+    );
+    url.searchParams.set("end_date", DateUtils.incrementDateString(date, 180));
 
     /** @type {{predictions:RawHighLowData[]}} */
     const rawData = await this.#getNoaaData(url);
