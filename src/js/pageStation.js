@@ -43,7 +43,7 @@ export class PageStation {
   /**
    * @param {string} stationId
    * @param {string} dateString
-   * @param {-1} increment
+   * @param {-1|1} increment
    */
   static async #handleDateIncrement(stationId, dateString, increment) {
     const dNew = DateUtils.incrementDateString(dateString, increment);
@@ -69,6 +69,12 @@ export class PageStation {
       async () => await this.#handleDateIncrement(stationId, dateString, -1),
     );
     hdom.createTextElement("div", "centered", dateString, eDate);
+    const eNextDate = hdom.createTextElement("button", {}, ">", eDate);
+    hdom.addEventListener(
+      eNextDate,
+      "click",
+      async () => await this.#handleDateIncrement(stationId, dateString, 1),
+    );
 
     const divTides = hdom.createElement(
       "div",

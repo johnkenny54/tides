@@ -62,6 +62,7 @@ div#station {
 div#station div#date {
   display: flex;
   column-gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 div#hilo {
