@@ -46,7 +46,8 @@ export class PageStation {
    * @param {-1} increment
    */
   static async #handleDateIncrement(stationId, dateString, increment) {
-    console.log(dateString);
+    const dNew = DateUtils.incrementDateString(dateString, increment);
+    await this.#showDateInfo(stationId, dNew);
   }
 
   /**
