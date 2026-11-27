@@ -11,10 +11,9 @@ import { PageNearbyStationList } from "./pageNearbyStationList.js";
 
 await navigator.serviceWorker.register("./sw.js", { type: "module" });
 
-hdom.addEventListener(
-  "menu-link-home",
-  "click",
-  async () => await PageNearbyStationList.createPage(),
-);
+hdom.addEventListener("menu-link-home", "click", async (e) => {
+  e.preventDefault();
+  await PageNearbyStationList.createPage();
+});
 
 await PageNearbyStationList.createPage();
