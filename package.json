@@ -6,6 +6,7 @@
     "eslint": "eslint",
     "prettier": "prettier -l .",
     "server": "vite serve src",
+    "test": "vitest run",
     "tsc": "tsc"
   },
   "devDependencies": {
@@ -17,6 +18,7 @@
     "globals": "^17.14.0",
     "prettier": "^3.10.1",
     "typescript": "^7.0.2",
-    "vite": "^8.3.8"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.2"
   }
 }
