@@ -2,21 +2,23 @@
   "type": "module",
   "scripts": {
     "build": "vite build src",
-    "check": "npm run eslint && npm run tsc",
+    "check": "npm run eslint && npm run tsc && npm run test",
     "eslint": "eslint",
     "prettier": "prettier -l .",
     "server": "vite serve src",
+    "test": "vitest run",
     "tsc": "tsc"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@htmltools/hdom": "^0.1.7",
-    "@turf/turf": "^7.4.0",
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^26.6.6",
     "eslint": "^10.15.0",
     "globals": "^17.14.0",
     "prettier": "^3.10.1",
     "typescript": "^7.0.2",
-    "vite": "^8.3.8"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.2"
   }
 }
