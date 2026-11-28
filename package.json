@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build src",
-    "check": "npm run eslint && npm run tsc",
+    "check": "npm run eslint && npm run tsc && npm run test",
     "eslint": "eslint",
     "prettier": "prettier -l .",
     "server": "vite serve src",
@@ -12,7 +12,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@htmltools/hdom": "^0.1.7",
-    "@turf/turf": "^7.4.0",
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^26.6.6",
     "eslint": "^10.15.0",
     "globals": "^17.14.0",

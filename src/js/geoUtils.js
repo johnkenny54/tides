@@ -2,8 +2,8 @@ import { MathUtils } from "./mathUtils.js";
 
 export class GeoUtils {
   /**
-   * @param {GeoJSON.Position} p1
-   * @param {GeoJSON.Position} p2
+   * @param {import('geojson').Position} p1
+   * @param {import('geojson').Position} p2
    * @returns {number}
    */
   static getDistanceKM(p1, p2) {

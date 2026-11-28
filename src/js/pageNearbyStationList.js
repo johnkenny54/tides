@@ -1,10 +1,10 @@
-import * as turf from "@turf/turf";
 import { hdom } from "@htmltools/hdom";
 import { NOAA } from "./noaa.js";
 import { PageStation } from "./pageStation.js";
 import { Settings } from "./settings.js";
 import { Units } from "./units.js";
 import { DateUtils } from "./dateUtils.js";
+import { GeoUtils } from "./geoUtils.js";
 
 export class PageNearbyStationList {
   static async createPage() {
@@ -44,7 +44,6 @@ export class PageNearbyStationList {
    * @param {GeolocationCoordinates} currentCoords
    */
   static async #showNearbyStations(currentCoords) {
-    /** @type {import("@turf/turf").Coord} */
     const current = [currentCoords.longitude, currentCoords.latitude];
     const allStations = await NOAA.getStationList();
 
@@ -55,7 +54,7 @@ export class PageNearbyStationList {
     /** @type {{dist:number,station:import('./noaa.js').NOAAStationData}[]} */
     const nearbyStations = [];
     for (const station of allStations) {
-      const dist = turf.distance(current, [
+      const dist = GeoUtils.getDistanceKM(current, [
         station.getLongitude(),
         station.getLatitude(),
       ]);
