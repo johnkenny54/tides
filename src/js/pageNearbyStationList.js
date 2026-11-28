@@ -49,7 +49,7 @@ export class PageNearbyStationList {
 
     const ms = Settings.getMeasurementSystem();
     const distUnits = ms === "US" ? "mi" : "km";
-    const distance = ms === "US" ? 6 : 10;
+    const distance = Math.round(Units.convert(15, "km", distUnits));
 
     /** @type {{dist:number,station:import('./noaa.js').NOAAStationData}[]} */
     const nearbyStations = [];
